@@ -1,0 +1,21 @@
+=== AIRFLOW SETUP — Docker (portfolio) ===
+
+NOTE: Guna Docker Airflow untuk portfolio demo.
+      Code adalah identical dengan AWS MWAA.
+
+START AIRFLOW:
+  ⚠️ Stop NiFi dulu: docker stop nifi-container
+
+  $ docker-compose -f infrastructure/docker-compose.yml up -d
+
+ACCESS UI:
+  http://localhost:8080
+  Username: airflow | Password: airflow
+
+STOP AIRFLOW:
+  $ docker-compose -f infrastructure/docker-compose.yml down
+
+UNTUK AWS MWAA (production reference):
+  AWS Console → MWAA → Create environment
+  Upload DAG files ke S3 → MWAA auto-syncs
+  Same DAG code works without modification

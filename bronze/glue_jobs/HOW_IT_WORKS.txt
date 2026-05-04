@@ -1,0 +1,24 @@
+=== BRONZE LAYER — AWS Glue ===
+
+TUJUAN:
+  Ambil raw files dari S3 landing, tambah metadata, simpan sebagai Delta tables.
+  NO cleaning at this layer — raw as-is.
+
+FILES:
+  bronze_production_daily.py  - Excel → Delta (partition: bronze_year, well_id)
+  bronze_drilling_witsml.py   - WITSML XML → Delta (per folder type)
+  bronze_wellogs_las.py       - LAS → Delta (partition: well_name, log_type)
+
+METADATA ADDED (semua tables):
+  ingestion_ts    TIMESTAMP  When file was processed
+  source_file     STRING     Original filename
+  source_system   STRING     production/witsml/well_logs
+  well_id         STRING     F-1, F-11, F-12
+
+CARA RUN:
+  AWS Console → Glue → Jobs → [job_name] → Run
+  ATAU via Airflow task run_glue_bronze_*
+
+CARA DEBUG:
+  AWS Console → Glue → Jobs → [job] → Runs → Logs
+  Check CloudWatch logs kalau error

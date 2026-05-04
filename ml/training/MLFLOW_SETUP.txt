@@ -1,0 +1,15 @@
+=== MLFLOW SETUP — Databricks UI ===
+
+1. VIEW EXPERIMENTS
+   Databricks → Machine Learning → Experiments
+
+2. REGISTER MODEL
+   Experiment run → Register Model
+   Name: volve_pressure_prediction (etc.)
+
+3. STAGE TRANSITIONS
+   Models → [model] → Version → Transition to Production
+
+4. LOAD MODEL IN NOTEBOOK
+   import mlflow
+   model = mlflow.sklearn.load_model("models:/volve_pressure_prediction/Production")

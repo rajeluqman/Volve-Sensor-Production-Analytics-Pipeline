@@ -1,0 +1,11 @@
+=== TESTS ===
+
+unit/        - Unit tests per function/script
+integration/ - End-to-end pipeline tests
+
+RUN TESTS:
+  pytest tests/unit/ -v
+  pytest tests/integration/ -v
+
+COVERAGE:
+  pytest --cov=. tests/

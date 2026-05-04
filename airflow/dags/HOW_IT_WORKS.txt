@@ -1,0 +1,26 @@
+=== AIRFLOW ORCHESTRATION ===
+
+TUJUAN:
+  Orchestrate seluruh pipeline dalam 10-task DAG.
+
+DAGs:
+  volve_daily_pipeline.py    - Main pipeline DAG
+  volve_streaming_monitor.py - Anomaly monitoring DAG
+
+SCHEDULE: 0 2 * * * (2 AM daily)
+
+10-TASK ORDER:
+  1. check_source_files
+  2. run_glue_bronze_production  (parallel with 3)
+  3. run_glue_bronze_witsml      (parallel with 2)
+  4. run_silver_production       (parallel with 5)
+  5. run_silver_witsml           (parallel with 4)
+  6. check_dq_silver             ← DQ GATE
+  7. run_gold_production         (parallel with 8)
+  8. run_gold_features           (parallel with 7)
+  9. run_ml_scoring
+  10. send_daily_report
+
+CARA TRIGGER MANUAL:
+  Airflow UI → DAG → Trigger ▶
+  ATAU: airflow dags trigger volve_daily_pipeline

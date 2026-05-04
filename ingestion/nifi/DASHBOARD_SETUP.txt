@@ -1,0 +1,22 @@
+=== NIFI DASHBOARD SETUP ===
+=== Kena buat dari browser, BUKAN terminal ===
+
+1. BUKA NIFI UI
+   https://localhost:8443/nifi
+   Username: admin | Password: adminpassword123
+
+2. IMPORT FLOW TEMPLATE
+   Upload → ingestion/nifi/templates/volve_router.xml
+   Drag template ke canvas
+
+3. CONFIGURE PROCESSOR SETTINGS
+   GetFile → Input Directory: /data/volve-source
+   PutS3Object → Bucket: volve-landing
+   PutS3Object → Credentials: AWS credentials dari environment
+
+4. START ALL PROCESSORS
+   Right-click canvas → Start
+
+5. MONITOR
+   View → Summary → check processor status
+   Green = running | Red = stopped | Yellow = warning

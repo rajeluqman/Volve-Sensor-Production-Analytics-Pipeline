@@ -1,0 +1,3 @@
+=== DATABRICKS SETUP — GOLD LAYER ===
+Sama dengan silver/notebooks/DATABRICKS_SETUP.txt
+Upload notebooks ke: /Shared/volve/gold/

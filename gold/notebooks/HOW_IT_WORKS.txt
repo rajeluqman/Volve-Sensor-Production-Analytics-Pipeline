@@ -1,0 +1,23 @@
+=== GOLD LAYER — Databricks ===
+
+TUJUAN:
+  Aggregate Silver data. Calculate KPIs and anomaly flags.
+  Build ML feature store.
+
+FILES:
+  gold_fact_production.py  - Daily production facts + anomaly flags
+  gold_feature_store.py    - ML features untuk 3 models
+  gold_aggregations.py     - Weekly + monthly aggregations
+  gold_anomaly_batch.py    - Batch anomaly scoring
+
+KEY BUSINESS RULES:
+  water_cut = BORE_WAT_VOL / (BORE_OIL_VOL + BORE_WAT_VOL) * 100
+  gas_oil_ratio = BORE_GAS_VOL / BORE_OIL_VOL
+  is_anomaly_pressure = pressure_delta_24h > 500
+  is_zero_prod_uptime = (BORE_OIL_VOL=0 AND ON_STREAM_HRS>0)
+
+OUTPUT TABLES:
+  gold.fact_daily_production  - Main KPI table
+  gold.ml_feature_store       - ML training features
+  gold.agg_weekly_production  - Weekly rollups
+  gold.agg_monthly_production - Monthly rollups
