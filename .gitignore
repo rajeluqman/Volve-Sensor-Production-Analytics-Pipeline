@@ -39,7 +39,8 @@ airflow/logs/
 # Docker
 docker-compose.override.yml
 
-# Claude Code — excluded from portfolio
+# Dev environment config
+setup.sh
 CLAUDE.md
 PROJECT_STATUS.md
 .mcp.json
