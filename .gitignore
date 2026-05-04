@@ -1,0 +1,55 @@
+# Credentials — JANGAN COMMIT
+.env
+*.env
+credentials/
+**/*credentials*
+*.key
+*.pem
+
+# Data files
+*.parquet
+*.csv
+*.xlsx
+*.las
+*.xml
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Databricks
+.databricks/
+
+# NiFi
+NiFiMCP/config.yaml
+
+# Logs
+*.log
+logs/
+airflow/logs/
+
+# Docker
+docker-compose.override.yml
+
+# Claude Code — excluded from portfolio
+CLAUDE.md
+PROJECT_STATUS.md
+.mcp.json
+docs/MCP_SETUP.md
+.claude/
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,18 @@
+=== INGESTION LAYER — NiFi + Groovy ===
+
+TUJUAN:
+  Route 3 source formats (Excel, WITSML XML, LAS) ke S3 Bronze landing zone.
+
+FILES:
+  templates/volve_router.xml   - NiFi flow template (import ke NiFi UI)
+  scripts/route_witsml.groovy  - Groovy script untuk route WITSML XML by folder type
+
+FLOW ORDER:
+  GetFile/ListS3 → RouteOnAttribute (by extension) → ExecuteGroovyScript → PutS3Object
+
+CARA SETUP (BUKAN terminal — kena buat dari NiFi UI):
+  Lihat: DASHBOARD_SETUP.txt
+
+CARA TEST:
+  Drop sample file ke watched folder, check S3 output:
+  aws s3 ls s3://volve-landing/ --recursive

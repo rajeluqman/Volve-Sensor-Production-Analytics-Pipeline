@@ -1,0 +1,20 @@
+=== SILVER LAYER — Databricks ===
+
+TUJUAN:
+  Clean, validate, deduplicate Bronze data. Add derived columns.
+  Output: ready for Gold layer.
+
+FILES:
+  silver_clean_production.py  - Clean production Excel data
+  silver_clean_witsml.py      - Clean WITSML XML data
+  silver_clean_welllogs.py    - Clean LAS well log data
+  silver_data_quality.py      - Run Great Expectations suites
+
+CARA RUN MANUAL:
+  python silver_clean_production.py --date 2013-01-15 --well F-1
+
+CARA DEBUG:
+  Check: airflow/logs/silver_clean_production/
+  Check: SELECT * FROM silver.dq_quarantine WHERE run_date = CURRENT_DATE
+
+LIHAT DATABRICKS_SETUP.txt untuk cara upload + run di Databricks UI

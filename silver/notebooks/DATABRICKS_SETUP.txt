@@ -1,0 +1,25 @@
+=== DATABRICKS SETUP — BUAT DI DASHBOARD ===
+
+1. CREATE CLUSTER
+   Compute → Create Compute
+   Runtime: 14.3 LTS ML | Auto-terminate: 30 min
+
+2. GENERATE TOKEN
+   Settings → Developer → Access tokens → Generate
+   Simpan: DATABRICKS_TOKEN=dapi_xxx
+
+3. SETUP AWS SECRETS
+   $ databricks secrets create-scope --scope aws
+   $ databricks secrets put --scope aws --key access-key --string-value "$(aws configure get aws_access_key_id)"
+   $ databricks secrets put --scope aws --key secret-key --string-value "$(aws configure get aws_secret_access_key)"
+
+4. UPLOAD NOTEBOOK
+   Workspace → Import → pilih .py file
+   ATAU: databricks workspace import silver_clean_production.py /Shared/volve/silver/
+
+5. RUN NOTEBOOK
+   Attach ke cluster → Run All
+
+TROUBLESHOOT:
+  Cluster terminated → Restart dari Compute tab
+  S3 access denied  → Check secrets scope

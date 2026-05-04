@@ -1,0 +1,20 @@
+=== ML LAYER — MLflow in Databricks ===
+
+TUJUAN:
+  Train 3 models menggunakan Gold feature store.
+  Track experiments dengan MLflow.
+
+FILES:
+  train_pressure_prediction.py  - XGBoost: predict next_day_pressure
+  train_drilling_efficiency.py  - Random Forest: predict ROP efficiency
+  train_anomaly_detection.py    - Isolation Forest: detect anomalies
+
+MLflow EXPERIMENTS:
+  volve_pressure_prediction
+  volve_drilling_efficiency
+  volve_anomaly_detection
+
+CARA VIEW RESULTS:
+  Databricks UI → Machine Learning → Experiments
+
+LIHAT MLFLOW_SETUP.txt untuk model registry dan stage transitions

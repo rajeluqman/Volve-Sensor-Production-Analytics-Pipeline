@@ -1,0 +1,20 @@
+=== DATA QUALITY — Great Expectations ===
+
+TUJUAN:
+  Validate data antara layers.
+  Block downstream kalau CRITICAL expectation fail.
+
+SUITES (4):
+  bronze_production_suite    - Bronze layer validation
+  silver_production_suite    - Silver production validation (DQ GATE)
+  silver_witsml_suite        - Silver WITSML validation
+  gold_feature_suite         - Gold feature store validation
+
+CARA RUN:
+  great_expectations suite list
+  great_expectations checkpoint run volve_silver_checkpoint
+
+RESULTS:
+  HTML docs: data_quality/great_expectations/uncommitted/data_docs/
+  DB table:  silver.dq_results
+  Quarantine: silver.dq_quarantine
