@@ -47,8 +47,16 @@ PROJECT_STATUS.md
 docs/MCP_SETUP.md
 .claude/
 
+# AI dev kit (Codespaces tooling — not project code)
+.ai-dev-kit/
+.github/
+.vscode/
+
+# AWS CLI installer
+aws/
+awscliv2.zip
+
 # IDE
-.vscode/settings.json
 .idea/
 
 # OS
