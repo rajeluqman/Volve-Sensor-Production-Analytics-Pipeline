@@ -1,0 +1,10 @@
+# Airflow runtime dependencies for the Volve pipeline
+# Install inside running containers:
+#   docker exec infrastructure-airflow-scheduler-1 /home/airflow/.local/bin/pip3 install -r /workspace/airflow/requirements.txt
+#   docker exec infrastructure-airflow-webserver-1 /home/airflow/.local/bin/pip3 install -r /workspace/airflow/requirements.txt
+
+databricks-sql-connector
+python-dotenv
+mlflow
+numpy
+pandas
