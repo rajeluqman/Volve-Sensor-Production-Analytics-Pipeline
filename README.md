@@ -215,7 +215,14 @@ Alert thresholds enforced in Gold:
 ├── infrastructure/
 │   └── docker-compose.yml         # Airflow 2.9.3 + Postgres (LocalExecutor)
 │
-├── tests/                         # Unit + integration tests
+├── tests/                         # Unit + integration tests (84 tests)
+│   ├── conftest.py                # pytest fixtures + integration marker
+│   ├── requirements.txt           # pytest, pytest-cov, databricks, snowflake
+│   ├── unit/
+│   │   ├── test_transform_logic.py    # Business rule functions (water_cut, GOR, flags)
+│   │   └── test_sql_structure.py      # SQL string structural assertions
+│   └── integration/
+│       └── test_pipeline_smoke.py     # Databricks + Snowflake connectivity checks
 └── docs/
     ├── ARCHITECTURE.md            # Solution architecture + ADRs
     ├── BRD.md                     # Business requirements
@@ -269,6 +276,14 @@ python data_quality/run_dq.py
 # Load Snowflake serving layer
 pip install -r snowflake/requirements.txt
 cd snowflake && python run_snowflake.py
+
+# Run unit tests (no credentials needed)
+pip install pytest python-dotenv
+pytest tests/unit/ -v
+
+# Run integration smoke tests (requires .env credentials)
+pip install -r tests/requirements.txt
+pytest tests/integration/ -v -m integration
 ```
 
 ### Airflow (Docker)
@@ -300,7 +315,7 @@ docker exec infrastructure-airflow-scheduler-1 \
 | Phase 6 | Orchestration (Airflow DAG) | Done |
 | Phase 7 | Data Quality (Great Expectations) | Done |
 | Phase 8 | Serving Layer (Snowflake) | Done |
-| Phase 9 | Testing + Documentation Finalisation | In Progress |
+| Phase 9 | Testing + Documentation Finalisation | Done |
 
 ---
 
