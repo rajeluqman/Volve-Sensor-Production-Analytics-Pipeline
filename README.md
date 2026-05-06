@@ -320,6 +320,6 @@ Released under the Equinor Open Data Licence. Not included in this repository. A
 | `read_files()` for ingestion | Native Databricks SQL function — handles Excel + XML without custom ETL code |
 | `TO_JSON(trajectoryStation)` in Bronze | WITSML XML schema varies across wellbores — JSON string avoids UNION ALL conflict |
 | 3 wells only (F-1, F-11, F-12) | Free-tier SQL Warehouse constraint — representative sample of 29 wells |
-| Docker Airflow vs MWAA | $0 vs ~$50/month — code-identical to MWAA, valid portfolio demonstration |
+| Docker Airflow vs MWAA | $0 vs ~$50/month — code-identical to MWAA |
 | Sequential execution (NiFi / Airflow) | 8GB Codespaces RAM — cannot run concurrent Docker services |
 | Python connector for Snowflake load | Direct ETL via pandas + snowflake-connector — no intermediate S3 staging needed |
