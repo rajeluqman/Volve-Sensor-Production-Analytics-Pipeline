@@ -1,0 +1,44 @@
+# Great Expectations — Volve Data Quality Project
+# Phase 7: SQL-based validation against Databricks SQL Warehouse
+#
+# Suites:
+#   bronze_production_suite  → claudecatalog.bronze.raw_production       (>95% pass)
+#   silver_production_suite  → claudecatalog.silver.cleaned_production    (>95% pass)
+#   silver_witsml_suite      → claudecatalog.silver.cleaned_trajectory    (>95% pass)
+#   gold_feature_suite       → claudecatalog.gold.ml_feature_store        (>95% pass)
+#
+# Run all suites:
+#   python data_quality/run_dq.py
+#
+# Run single suite:
+#   python data_quality/run_dq.py --suite bronze_production_suite
+#
+# Results written to: claudecatalog.silver.dq_results
+
+project:
+  name: volve_data_quality
+  version: "1.0"
+
+datasource:
+  type: databricks_sql_warehouse
+  warehouse_id: "470a6646b4bd0dd2"
+  catalog: claudecatalog
+
+suites:
+  - name: bronze_production_suite
+    table: claudecatalog.bronze.raw_production
+    pass_threshold: 0.95
+
+  - name: silver_production_suite
+    table: claudecatalog.silver.cleaned_production
+    pass_threshold: 0.95
+
+  - name: silver_witsml_suite
+    table: claudecatalog.silver.cleaned_trajectory
+    pass_threshold: 0.95
+
+  - name: gold_feature_suite
+    table: claudecatalog.gold.ml_feature_store
+    pass_threshold: 0.95
+
+results_table: claudecatalog.silver.dq_results
