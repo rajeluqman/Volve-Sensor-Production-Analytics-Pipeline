@@ -41,15 +41,16 @@ docker-compose.override.yml
 
 # Dev environment config
 setup.sh
-CLAUDE.md
-PROJECT_STATUS.md
 .mcp.json
 docs/MCP_SETUP.md
-.claude/
+
+# NOTE (2026-06-29 governance retrofit): CLAUDE.md, PROJECT_STATUS.md, .claude/, and .github/
+# were previously listed above as ignored. They are now INTENTIONALLY COMMITTED — same pattern
+# as the other 3 pipeline-retrofit repos (home-credit/olist/paysim) — this is a standalone,
+# self-contained governance+learning lab by design, not project-config noise.
 
 # AI dev kit (Codespaces tooling — not project code)
 .ai-dev-kit/
-.github/
 .vscode/
 
 # AWS CLI installer

@@ -12,6 +12,53 @@ The Volve field operated from 2007 to 2016 in the Norwegian North Sea. Equinor r
 
 ---
 
+## Why This Pipeline Exists (Purpose)
+
+This is a **data-engineering portfolio pipeline** built on a real, public North Sea oil-field
+dataset. It exists to demonstrate — end-to-end and on production-grade tooling — how raw,
+multi-format upstream sensor and production data (Excel production reports + WITSML XML
+trajectory/sensor logs) is turned into a **trustworthy, queryable analytics product** that a
+production-engineering / reservoir team could actually run a daily operation on.
+
+- **Who consumes it:** a (simulated) production-engineering & reservoir-ops team, via the
+  Snowflake BI serving views — not the raw lakehouse tables.
+- **What decision it supports:** daily "which wells need attention today, and why" monitoring,
+  plus forward-looking pressure/efficiency signals for intervention planning.
+- **Why it's built this way:** to show lakehouse layering (Bronze→Silver→Gold), a real DQ gate
+  that can *block* bad data from reaching BI, ML feature engineering, and orchestration — the
+  full shape of a production pipeline, not a notebook demo.
+
+## Business Questions This Pipeline Answers
+
+| # | Business question | Where it's answered |
+|---|---|---|
+| 1 | **Which wells are showing production anomalies today** (pressure spikes, water-cut spikes, zero production while on-stream, GOR anomalies) that need engineering attention? | Gold anomaly flags → `vw_anomaly_alerts` (severity-ranked) |
+| 2 | **What is next-day downhole pressure likely to be**, so ops can pre-empt declines? | `volve_pressure_prediction` (XGBoost) → `vw_ml_predictions` |
+| 3 | **How does production/drilling efficiency compare across wells and over time?** | `vw_well_comparison`, `vw_production_trends`, `volve_drilling_efficiency` |
+| 4 | **Is the production record trustworthy** before it reaches BI — or are DQ issues silently corrupting it? | Silver DQ gate (`check_dq_silver`, blocks downstream if < 95% pass) |
+
+## Results & Evidence
+
+> ⚠️ **Run-evidence not yet captured (placeholder — to be filled after a verified end-to-end run).**
+> The transform/ML/serving code exists and is wired into the Airflow DAG, but this repo does
+> **not** currently contain captured run-outputs (model RMSE/accuracy, anomaly counts, DQ pass
+> rates, final row counts, BI screenshots). Per the project's no-fabrication rule, no metrics are
+> invented here — this section will be populated only from a real, reproducible pipeline run.
+
+What **is** verifiable today (code-existence + reconciled claims):
+
+- **Scope:** 3 wells (F-1, F-11, F-12) of 29; **4,967** production records (2007–2016).
+- **Serving:** 5 Snowflake BI views defined in `snowflake/create_views.py`.
+- **ML:** 3 models defined (`ml/train_*.py`) — XGBoost / Random Forest / Isolation Forest.
+- **DQ:** a real **inline-SQL** threshold gate runs in the DAG (`check_dq_silver`).
+
+**Honesty note for reviewers:** an earlier resume/README claimed "Great Expectations suites" and
+"84 tests, 0 failures" — neither is supported by the repo (`data_quality/` and `tests/` are
+stub-only). The real DQ mechanism is the inline-SQL gate above. Full reconciliation:
+[`INTERVIEW_GUIDE.md`](INTERVIEW_GUIDE.md) and `CLAUDE.md` "Known doc staleness".
+
+---
+
 ## Architecture
 
 ```
@@ -298,9 +345,17 @@ docker exec infrastructure-airflow-scheduler-1 \
 | Phase 4 | Gold Layer + Feature Store | Done |
 | Phase 5 | ML Models (MLflow) | Done |
 | Phase 6 | Orchestration (Airflow DAG) | Done |
-| Phase 7 | Data Quality (Great Expectations) | Done |
+| Phase 7 | Data Quality (inline SQL gate in Airflow DAG — see note) | Done |
 | Phase 8 | Serving Layer (Snowflake) | Done |
 | Phase 9 | Testing + Documentation Finalisation | In Progress |
+
+> **Phase 7 correction (2026-06-29 governance retrofit):** this table previously said "Data
+> Quality (Great Expectations) — Done". The real DQ gate is 5 inline SQL threshold checks in
+> `airflow/dags/volve_daily_pipeline.py` (`DQ_CHECKS_SQL`, task `check_dq_silver`) — no Great
+> Expectations suite exists anywhere in the repo (`data_quality/` contains only a
+> `HOW_IT_WORKS.txt` stub). The gate itself is real and does run; the GE-suite framing was not.
+> See `CLAUDE.md` "Known doc staleness" and `INTERVIEW_GUIDE.md` for the full reconciliation,
+> including the "84 tests, 0 failures" claim, which `tests/` (also stub-only) does not support.
 
 ---
 
