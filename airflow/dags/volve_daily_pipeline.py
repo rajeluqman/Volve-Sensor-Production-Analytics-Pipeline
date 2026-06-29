@@ -12,7 +12,10 @@ Databricks SQL Warehouse (claudecatalog). No AWS Glue — all transforms via Dat
 
 from __future__ import annotations
 
+import json
+import logging
 import os
+import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -24,15 +27,47 @@ from operators.databricks_sql_operator import (
     DatabricksSQLScriptOperator,
 )
 
+log = logging.getLogger(__name__)
+
 PROJECT_ROOT = Path(
     os.environ.get("VOLVE_PROJECT_ROOT", Path(__file__).parent.parent.parent)
 )
+
+
+def _notify_slack_failure(context: dict) -> None:
+    """Slack alerting backfill (this repo had none — `01_OPUS_DECISIONS.md` flagged Volve as a
+    Slack-backfill repo like olist, ported from CIL's `_notify_slack_failure` pattern in
+    `dags/creative_intel_pipeline.py`). Graceful no-op if SLACK_WEBHOOK_URL is unset — alerting
+    being unconfigured must never raise a second failure on top of the real one."""
+    webhook = os.environ.get("SLACK_WEBHOOK_URL", "")
+    if not webhook:
+        log.warning("SLACK_WEBHOOK_URL not set — skipping Slack alert (credentials not filled in yet)")
+        return
+
+    ti = context["task_instance"]
+    text = (
+        f":red_circle: *Volve pipeline task failed*\n"
+        f"*DAG:* `{ti.dag_id}`  *Task:* `{ti.task_id}`\n"
+        f"*Run:* `{context.get('run_id', '?')}`\n"
+        f"<{ti.log_url}|View logs>"
+    )
+    body = json.dumps({"text": text}).encode("utf-8")
+    req = urllib.request.Request(
+        webhook, data=body, headers={"Content-Type": "application/json"}, method="POST"
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            log.info("Slack alert sent (status %s)", resp.status)
+    except Exception as e:  # noqa: BLE001 — alerting must never raise into the task's own failure handling
+        log.warning("Slack alert failed to send: %s", e)
+
 
 DEFAULT_ARGS = {
     "owner":            "volve-pipeline",
     "retries":          1,
     "retry_delay":      timedelta(minutes=5),
     "email_on_failure": False,
+    "on_failure_callback": _notify_slack_failure,
     "email_on_retry":   False,
 }
 

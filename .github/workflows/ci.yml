@@ -1,0 +1,61 @@
+name: CI
+
+# static-gates: $0, no cloud, no secrets, runs on every PR + push. Proves: scripts compile,
+# lint clean, the 3 governance contracts hold, repo-map index is fresh, sim isolation holds.
+# Does NOT run a real Databricks read_files()/SQL transform or a real Snowflake load — those
+# need Databricks/Snowflake credentials this repo's CI does not have. There is also no real
+# pytest suite to run yet (tests/ is a HOW_IT_WORKS.txt stub — see CLAUDE.md "Known doc
+# staleness"; building real tests is deferred). Pattern ported from
+# creative_intelligence_lab / home-credit-pipeline's CI of the same shape.
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  static-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install ruff
+
+      - name: Lint (ruff)
+        run: ruff check bronze/ silver/ gold/ ml/ snowflake/ scripts/ tests/ .claude/hooks/ simulation/ airflow/dags/
+
+      - name: Compile Python
+        run: |
+          shopt -s nullglob
+          for f in bronze/*.py silver/*.py gold/*.py ml/*.py snowflake/*.py scripts/*.py tests/*.py .claude/hooks/*.py simulation/*.py simulation/faults/*.py airflow/dags/*.py airflow/dags/operators/*.py; do
+            python -m py_compile "$f"
+          done
+
+      - name: Identity contract ((well_id, DATEPRD) / (well_id, md_m) grain — ADR-008)
+        run: python tests/identity_contract.py
+
+      - name: Boundary contract (Databricks SQL Warehouse only, no dbt, 3-well scope)
+        run: python tests/boundary_contract.py
+
+      - name: Doc-reference contract (no path drift)
+        run: python tests/doc_reference_contract.py
+
+      - name: Repo-map freshness (navigation index matches ground truth)
+        run: python scripts/gen_repo_map.py --check
+
+      - name: Simulation isolation contract (sim lab cannot touch claudecatalog/VOLVE_DB)
+        run: python simulation/check_isolation.py
+
+      - name: Guard — no secrets / .env committed
+        run: |
+          if git ls-files | grep -E '(^|/)\.env$'; then
+            echo "::error::.env must not be committed"; exit 1
+          fi
+          echo "no .env tracked - ok"

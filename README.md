@@ -298,9 +298,17 @@ docker exec infrastructure-airflow-scheduler-1 \
 | Phase 4 | Gold Layer + Feature Store | Done |
 | Phase 5 | ML Models (MLflow) | Done |
 | Phase 6 | Orchestration (Airflow DAG) | Done |
-| Phase 7 | Data Quality (Great Expectations) | Done |
+| Phase 7 | Data Quality (inline SQL gate in Airflow DAG — see note) | Done |
 | Phase 8 | Serving Layer (Snowflake) | Done |
 | Phase 9 | Testing + Documentation Finalisation | In Progress |
+
+> **Phase 7 correction (2026-06-29 governance retrofit):** this table previously said "Data
+> Quality (Great Expectations) — Done". The real DQ gate is 5 inline SQL threshold checks in
+> `airflow/dags/volve_daily_pipeline.py` (`DQ_CHECKS_SQL`, task `check_dq_silver`) — no Great
+> Expectations suite exists anywhere in the repo (`data_quality/` contains only a
+> `HOW_IT_WORKS.txt` stub). The gate itself is real and does run; the GE-suite framing was not.
+> See `CLAUDE.md` "Known doc staleness" and `INTERVIEW_GUIDE.md` for the full reconciliation,
+> including the "84 tests, 0 failures" claim, which `tests/` (also stub-only) does not support.
 
 ---
 
