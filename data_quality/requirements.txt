@@ -1,0 +1,6 @@
+# Phase 7 — Data Quality dependencies
+# Install: pip install -r data_quality/requirements.txt
+
+databricks-sql-connector
+python-dotenv
+tabulate
